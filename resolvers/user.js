@@ -15,6 +15,7 @@ export default {
     getUsers: (parents, args, { models }) => models.User.findAll(),
   },
   Mutation: {
+    login: (parents, { email, password }, { services, SECRET }) => services.authService.login(email, password, SECRET),
     register: async (parents, { password, ...args }, { models }) => {
       try {
         if (password.length < 5 || password.length > 100) {

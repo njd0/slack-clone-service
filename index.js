@@ -5,6 +5,7 @@ import { ApolloServer } from 'apollo-server-express';
 import typeDefs from './types/index';
 import resolvers from './resolvers/index';
 import models from './models';
+import initServices from './services';
 
 const server = new ApolloServer({
   typeDefs,
@@ -12,6 +13,9 @@ const server = new ApolloServer({
   context: ({req, res}) => ({
     models,
     user: { id: 1 },
+    services: initServices(models),
+    SECRET: '123', // TODO store randomly generated secret
+    REFRESHSECRET: '456', // TODO store refresh secret in user
   }),
 });
 
