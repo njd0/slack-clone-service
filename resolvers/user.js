@@ -1,4 +1,3 @@
-import bcrypt from 'bcryptjs';
 import _ from 'lodash';
 
 const formatErrors = (e, models) => {
@@ -15,18 +14,12 @@ export default {
     getUsers: (parents, args, { models }) => models.User.findAll(),
   },
   Mutation: {
-    login: (parents, { email, password }, { services, SECRET }) => services.authService.login(email, password, SECRET),
-    register: async (parents, { password, ...args }, { models }) => {
+    login: (parents, { email, password }, { services, SECRET, REFRESHSECRET }) => (
+      services.authService.login(email, password, SECRET, REFRESHSECRET)
+    ),
+    register: async (parents, args, { models }) => {
       try {
-        if (password.length < 5 || password.length > 100) {
-          return {
-            errors: [{ path: 'password', message: 'The password needs to be between 5 and 100 characters long' }],
-          };
-        }
-
-        const salt = bcrypt.genSaltSync(12);
-        const hashedPassword = bcrypt.hashSync(password, salt);
-        const user = await models.User.create({ ...args, password: hashedPassword });
+        const user = await models.User.create(args);
         return {
           user,
         };
